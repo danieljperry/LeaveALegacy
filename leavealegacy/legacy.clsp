@@ -1,0 +1,54 @@
+(mod (
+    OWNER_PUBKEY       ; (curryed) The public key of the address that is allowed to spend the coin before time timelock expires
+    COIN_VALUE         ; (curryed) The value of this coin, in mojos
+    WAIT_TIME          ; (curryed) The amout of time before the timelock expires, in seconds
+    LEGACY_PUZZLE      ; (curryed) Another legacy puzzle, can also be '()' for an empty puzzle
+    msg                ; A message to be included when spending the coin, can be anything
+    spend_pubkey       ; The public key of the address that is attempting to spend the coin; can be same as OWNER_PUBKEY, or different
+    receive_puzzlehash ; The puzzlehash of the wallet to receive the coin when it's spent
+    )
+
+    (include condition_codes.clib)
+
+    ; check_for_legacy_puzzle will first assert the timelock associated with the current puzzle.
+    ; This is done in lieu of having an oracle that can verify the death of the coin's owner.
+    ; If there is an inner puzzle, then execute it.
+    ; If not, then proceed to spend the coin.
+
+    (defun-inline check_for_legacy_puzzle (COIN_VALUE WAIT_TIME LEGACY_PUZZLE msg spend_pubkey receive_puzzlehash)
+        (c
+            (list ASSERT_SECONDS_RELATIVE WAIT_TIME)
+        
+            (if (f (list LEGACY_PUZZLE))
+                (a LEGACY_PUZZLE (list msg spend_pubkey receive_puzzlehash))
+                (spend_coin COIN_VALUE spend_pubkey msg receive_puzzlehash)
+            )
+        )
+    )
+
+    ; spend_coin will check the aggregated signature. If valid, then the spend can go through.
+    ; There is no timelock associated with this method, but one may have been asserted previously.
+    ; Note that ASSERT_MY_AMOUNT is not needed because COIN_VALUE is curried in.
+    (defun-inline spend_coin (COIN_VALUE spend_pubkey msg receive_puzzlehash)
+        (list
+            (list AGG_SIG_ME spend_pubkey (sha256 msg))
+            (list CREATE_COIN receive_puzzlehash COIN_VALUE)
+            (list ASSERT_MY_PUZZLEHASH receive_puzzlehash)
+            (list CREATE_COIN_ANNOUNCEMENT COIN_VALUE)
+        )
+    )
+
+    ; Main method
+    ;
+    ; Check if the spend_pubkey matches the OWNER_PUBKEY.
+    ;
+    ; If yes, then the owner may spend the coin immediately,
+    ; pending any outer puzzle timelocks that have previously been asserted.
+    ;
+    ; If no, then see if there is an inner puzzle.
+
+    (if (= OWNER_PUBKEY spend_pubkey)
+        (spend_coin COIN_VALUE spend_pubkey msg receive_puzzlehash)
+        (check_for_legacy_puzzle COIN_VALUE WAIT_TIME LEGACY_PUZZLE msg spend_pubkey receive_puzzlehash)
+    )
+)
