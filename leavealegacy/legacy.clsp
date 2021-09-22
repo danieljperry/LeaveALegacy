@@ -33,7 +33,6 @@
         (list
             (list AGG_SIG_ME spend_pubkey (sha256 msg))
             (list CREATE_COIN receive_puzzlehash COIN_VALUE)
-            (list ASSERT_MY_PUZZLEHASH receive_puzzlehash)
             (list CREATE_COIN_ANNOUNCEMENT COIN_VALUE)
         )
     )
