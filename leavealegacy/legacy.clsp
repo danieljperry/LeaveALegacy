@@ -22,16 +22,16 @@
     
     ; check_for_inner_hash will first assert the timelock associated with the current puzzle.
     ; This is done in lieu of having an oracle that can verify the death of the coin's owner.
-    ; If there is an inner puzzle, then execute it.
-    ; If not, then proceed to spend the coin.
+    ; If there is an inner hash, then verify that the supplied inner puzzle's hash matches the curried hash.
+    ; If not, then execute whatever inner puzzle has been supplied without any verification.
 
-    (defun-inline check_for_inner_hash (WAIT_TIME INNER_PUZZLE_HASH inner_puzzle inner_solution spend_pubkey)
+    (defun-inline check_for_inner_hash (WAIT_TIME INNER_PUZZLE_HASH inner_puzzle inner_solution)
         (c
             (list ASSERT_SECONDS_RELATIVE WAIT_TIME)
         
             (if INNER_PUZZLE_HASH
                 (verify_inner INNER_PUZZLE_HASH inner_puzzle inner_solution)
-                (sign_and_execute_inner spend_pubkey inner_puzzle inner_solution)
+                (a inner_puzzle inner_solution)
             )
         )
     )
@@ -57,6 +57,6 @@
 
     (if (= OWNER_PUBKEY spend_pubkey)
         (sign_and_execute_inner spend_pubkey inner_puzzle inner_solution)
-        (check_for_inner_hash WAIT_TIME INNER_PUZZLE_HASH inner_puzzle inner_solution spend_pubkey)
+        (check_for_inner_hash WAIT_TIME INNER_PUZZLE_HASH inner_puzzle inner_solution)
     )
 )
