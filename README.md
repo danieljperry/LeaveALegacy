@@ -137,11 +137,11 @@ The requirements for the inner puzzle and inner solution are dependent on who is
 
 Here is the puzzle generated from the above example, which will go on the blockchain:
 
-'(a (q 2 (q 2 (i (= 5 -65) (q 4 (c 4 (c -65 (c (a 14 (c 2 (c 47 ()))) ()))) (a 47 95)) (q 4 (c 10 (c 11 ())) (a (i (= 23 ()) (q 4 (c 4 (c -65 (c (a 14 (c 2 (c 47 ()))) ()))) (a 47 95)) (q 2 (i (= 23 (a 14 (c 2 (c 47 ())))) (q 4 (c 4 (c -65 (c (a 14 (c 2 (c 47 ()))) ()))) (a 47 95)) (q 8 (q . "Inner puzzle does not match inner puzzle hash."))) 1)) 1))) 1) (c (q 50 80 2 (i (l 5) (q 11 (q . 2) (a 14 (c 2 (c 9 ()))) (a 14 (c 2 (c 13 ())))) (q 11 (q . 1) 5)) 1) 1)) (c (q . "AlicePubKey") (c (q . 3600) (c (q . 0x9c6e047a0771accebb46d5448d172b4e9f77f805f3b33d7fff5db4208c46286a) 1))))'
+	'(a (q 2 (q 2 (i (= 5 -65) (q 4 (c 4 (c -65 (c (a 14 (c 2 (c 47 ()))) ()))) (a 47 95)) (q 4 (c 10 (c 11 ())) (a (i (= 23 ()) (q 4 (c 4 (c -65 (c (a 14 (c 2 (c 47 ()))) ()))) (a 47 95)) (q 2 (i (= 23 (a 14 (c 2 (c 47 ())))) (q 4 (c 4 (c -65 (c (a 14 (c 2 (c 47 ()))) ()))) (a 47 95)) (q 8 (q . "Inner puzzle does not match inner puzzle hash."))) 1)) 1))) 1) (c (q 50 80 2 (i (l 5) (q 11 (q . 2) (a 14 (c 2 (c 9 ()))) (a 14 (c 2 (c 13 ())))) (q 11 (q . 1) 5)) 1) 1)) (c (q . "AlicePubKey") (c (q . 3600) (c (q . 0x9c6e047a0771accebb46d5448d172b4e9f77f805f3b33d7fff5db4208c46286a) 1))))'
 
 And now for some solutions. Let’s say the coin is worth 1000 mojos and Alice wants to send half to herself and half to her car dealer. She could use this solution:
 
-		'( (q . ((51 0xa11ce 500) (51 0xfadedcab 500))) () AlicePubKey)'
+	'( (q . ((51 0xa11ce 500) (51 0xfadedcab 500))) () AlicePubKey)'
 
 Which would result in the following conditions:
 
@@ -154,13 +154,13 @@ FAIL: clvm raise ("Inner puzzle does not match inner puzzle hash.")
 
 Even if he supplies the inner puzzle (which he should have in his possession), he’ll be stopped by the timelock as long as Alice is still Alive:
 
-		'_[BobPuzzle]_ ((q . ((51 0b0b 500) (51 0xfadedcab 500))) () BobPubKey) BobPubKey)'
+	'[BobPuzzle] ((q . ((51 0b0b 500) (51 0xfadedcab 500))) () BobPubKey) BobPubKey)'
 
 ((80 3600) (50 "BobPubKey" 0x9c6e047a0771accebb46d5448d172b4e9f77f805f3b33d7fff5db4208c46286a) (50 "BobPubKey" 0x1b60245290c5cc917b2efa6294565146c4caf7d4f2b37352c142faa2f0f762bd) (51 "0b0b" 500) (51 0xfadedcab 500))
 
 If someone from the charity has the correct password and wishes to spend the coin, they must supply both inner puzzles:
 
-		'_[BobPuzzle]_ (_[CharityPuzzle]_ (hello CharityPubKey 0xdeadbeef 1000) CharityPubKey) CharityPubKey)'
+	'[BobPuzzle] ([CharityPuzzle] (hello CharityPubKey 0xdeadbeef 1000) CharityPubKey) CharityPubKey)'
 
 ((80 3600) (50 "CharityPubKey" 0x9c6e047a0771accebb46d5448d172b4e9f77f805f3b33d7fff5db4208c46286a) (80 7200) (50 "CharityPubKey" 0x0933224426cc47801ecfc4d1914c22ea5116c38eefef9989396e85af75b1259f) (50 "CharityPubKey" 0x43138432a85321ce4eb110af0ec388a4fabc1deb8e82242430579bd3e41abda2) (51 0xdeadbeef 1000) (60 1000))
 
@@ -168,7 +168,7 @@ With each inner puzzle, we add on at least two new conditions:
 
 - 50 – Sign the transaction with the private key that matches the public key given in the solution.
 
-– 80 – Ensure that at least a certain number of seconds have elapsed since the coin’s creation, simulating owner’s untimely death. If this condition is not met, the spend fails with ASSERT_SECONDS_RELATIVE_FAILED.
+- 80 – Ensure that at least a certain number of seconds have elapsed since the coin’s creation, simulating owner’s untimely death. If this condition is not met, the spend fails with ASSERT_SECONDS_RELATIVE_FAILED.
 
 Most users will also want to add their own conditions, such as:
 
