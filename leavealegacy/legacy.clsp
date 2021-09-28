@@ -11,11 +11,11 @@
     (include sha256tree1.clvm)
 
     ; Make sure the inner puzzle's treehash matches the hash that was curryed in.
-    ; If they match, then sign execute the inner puzzle.
+    ; If they match, then execute the inner puzzle.
     ; If they don't match, raise an error and exit.
-    (defun-inline verify_inner (spend_pubkey inner_puzzle inner_solution)
+    (defun-inline verify_inner (INNER_PUZZLE_HASH inner_puzzle inner_solution)
         (if (= INNER_PUZZLE_HASH (sha256tree1 inner_puzzle))
-            (sign_and_execute_inner spend_pubkey inner_puzzle inner_solution)
+            (a inner_puzzle inner_solution)
             (x "Inner puzzle does not match inner puzzle hash.")
         )
     )
@@ -29,9 +29,9 @@
         (c
             (list ASSERT_SECONDS_RELATIVE WAIT_TIME)
         
-            (if (= INNER_PUZZLE_HASH ())
+            (if INNER_PUZZLE_HASH
+                (verify_inner INNER_PUZZLE_HASH inner_puzzle inner_solution)
                 (sign_and_execute_inner spend_pubkey inner_puzzle inner_solution)
-                (verify_inner spend_pubkey inner_puzzle inner_solution)
             )
         )
     )
