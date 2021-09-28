@@ -154,6 +154,10 @@ Here is the puzzle generated from the above example, which will go on the blockc
 And now for some solutions. Let’s say the coin is worth 1000 mojos and Alice wants to send half to herself and half to her car dealer. She could use this solution:
 
 	'( (q . ((51 0xa11ce 500) (51 0xfadedcab 500))) () AlicePubKey)'
+	
+Here is the command to do this (brun '[puzzle]' '[solution]'):
+
+	brun '(a (q 2 (q 2 (i (= 5 -65) (q 4 (c 4 (c -65 (c (a 14 (c 2 (c 47 ()))) ()))) (a 47 95)) (q 4 (c 10 (c 11 ())) (a (i 23 (q 2 (i (= 23 (a 14 (c 2 (c 47 ())))) (q 2 47 95) (q 8 (q . "Inner puzzle does not match inner puzzle hash."))) 1) (q 2 47 95)) 1))) 1) (c (q 50 80 2 (i (l 5) (q 11 (q . 2) (a 14 (c 2 (c 9 ()))) (a 14 (c 2 (c 13 ())))) (q 11 (q . 1) 5)) 1) 1)) (c (q . "AlicePubKey") (c (q . 3600) (c (q . 0xdd9e391596a5fd732897d32d189db7768ef05a332e325eec1a0a0f4205aed845) 1))))' '( (q . ((51 0xa11ce 500) (51 0xfadedcab 500))) () AlicePubKey)'
 
 Which would result in the following conditions:
 
@@ -166,29 +170,28 @@ FAIL: clvm raise ("Inner puzzle does not match inner puzzle hash.")
 
 Even if he supplies the inner puzzle (which he should have in his possession), he’ll be stopped by the timelock as long as Alice is still Alive:
 
-	'[BobPuzzle] ((q . ((51 0b0b 500) (51 0xfadedcab 500))) () BobPubKey) BobPubKey)'
+	'( [BobPuzzle] ((q . ((51 b0b 500) (51 fadedcab 500))) () BobPubKey) BobPubKey)'
 
-((80 3600) (50 "BobPubKey" 0x9c6e047a0771accebb46d5448d172b4e9f77f805f3b33d7fff5db4208c46286a) (50 "BobPubKey" 0x1b60245290c5cc917b2efa6294565146c4caf7d4f2b37352c142faa2f0f762bd) (51 "0b0b" 500) (51 0xfadedcab 500))
+((80 3600) (50 "BobPubKey" 0x81c0451c54b5b8a9de0752a601a05f4a59f75d7eedd305350e014c167b69508f) (51 "b0b" 500) (51 "fadedcab" 500))
 
 If someone from the charity has the correct password and wishes to spend the coin, they must supply both inner puzzles:
 
-	'[BobPuzzle] ([CharityPuzzle] (hello CharityPubKey 0xdeadbeef 1000) CharityPubKey) CharityPubKey)'
+	'( [BobPuzzle] ([CharityPuzzle] (hello CharityPubKey 0xdeadbeef 1000) CharityPubKey) CharityPubKey)'
 
-((80 3600) (50 "CharityPubKey" 0x9c6e047a0771accebb46d5448d172b4e9f77f805f3b33d7fff5db4208c46286a) (80 7200) (50 "CharityPubKey" 0x0933224426cc47801ecfc4d1914c22ea5116c38eefef9989396e85af75b1259f) (50 "CharityPubKey" 0x43138432a85321ce4eb110af0ec388a4fabc1deb8e82242430579bd3e41abda2) (51 0xdeadbeef 1000) (60 1000))
+((80 3600) (80 7200) (50 "CharityPubKey" 0x43138432a85321ce4eb110af0ec388a4fabc1deb8e82242430579bd3e41abda2) (51 0xdeadbeef 1000) (60 1000))
 
-With each inner puzzle, we add on at least two new conditions:
-
-- 50 – Sign the transaction with the private key that matches the public key given in the solution.
+With each inner puzzle, we add on a new condition:
 
 - 80 – Ensure that at least a certain number of seconds have elapsed since the coin’s creation, simulating owner’s untimely death. If this condition is not met, the spend fails with ASSERT_SECONDS_RELATIVE_FAILED.
 
 Most users will also want to add their own conditions, such as:
+- 50 – Sign the transaction with the private key that matches the public key given in the solution.
 
 - 51 – create a new coin
 	
 - 60 – create an announcement for the coin spend
 
-If anyone (even Alice) attempts to spend the coin without an aggregated signature, the spend will fail with BAD_AGGREGATE_SIGNATURE.
+If Alice or Bob attempt to spend the coin without an aggregated signature, the spend will fail with BAD_AGGREGATE_SIGNATURE. This protects against malicious users attempting to spend the coin to themselves by impersonating its rightful owner.
 
 ------------------------------------------
 **VII. Potential Future Improvements**
