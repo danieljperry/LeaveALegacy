@@ -44,7 +44,9 @@ In the simplest case, let's say Alice doesn’t have any heirs and she wants to 
 ------------------------------------------
 **III. More Complex Example**
 
-Legacy Coins can support inner coins of any type, including other Legacy Coins. This makes a wide variety of functionality possible. For example, let’s say Alice wants to bequeath her money to Bob upon her death. If Bob also dies before the money has been spent, she wants the money to go to a charity. But she doesn’t trust everyone at the charity, so she gives a password to a few of its employees, which can be used to unlock the coin. Here are the rules she can set up:
+Legacy Coins can support inner coins of any type, including other Legacy Coins. This makes possible a wide variety of functionality.
+
+For example, let’s say Alice wants to bequeath her money to Bob upon her death. If Bob also dies before the money has been spent, she wants the money to go to a charity. But she doesn’t trust everyone at the charity, so she gives a password to a few of its employees, which can be used to unlock the coin. Here are the rules she can set up:
 
 – Before Alice’s death, only Alice can spend the coin.
 
@@ -83,6 +85,8 @@ Here’s how to create a Legacy Coin using the more complex scenario laid out ab
 	The result using the ‘hello’ hash is 0933224426cc47801ecfc4d1914c22ea5116c38eefef9989396e85af75b1259f
 		
 	Save this hash as it will be needed in the next puzzle.
+	
+		* Caution: Passwords aren't particularily secure on public blockchains, so don't try this for real unless you know what you are doing. For more info, see https://chialisp.com/docs/security/#password-locked-coin-security
 
 3. Now build the inner legacy puzzle, which I’ll call [BobPuzzle]. This puzzle uses [PasswordPuzzle] as its inner puzzle. Curry in 3 values:
 
