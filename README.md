@@ -52,9 +52,9 @@ Legacy Coins can support inner coins of any type, including other Legacy Coins. 
 
 – After Alice and Bob’s deaths, anyone with the password can spend the coin. A few members of the charity have access to the password.
 
-(This example is a bit contrived, but the coin itself is quite versatile in its possibilities. It could go many levels deep, or it could automatically allocate funds to multiple recipients. It could even have a “failsafe” feature to unlock the money if it hasn't been spend after, say, 100 years.)
+(This example is a bit contrived, but the coin itself is quite versatile in its possibilities. It could go many levels deep, or it could automatically allocate funds to multiple recipients. It could even have a “failsafe” feature to unlock the money if it hasn't been spent after, say, 100 years.)
 
-One advantage of this coin is that as soon as it is created, Alice can provide its ID, along with the correct puzzle and solution to unlock it, to both Bob and the employees of the charity. They can all see the coin on the blockchain and verify that it has not been spent. Even though they possess the solution, they cannot spend it yet. This could potentially eliminate the need for complicated wills and/or expensive lawyers to determine inheritance.*
+One advantage of this coin is that as soon as it is created, Alice can provide its ID, along with the correct puzzle and solution to unlock it, to both Bob and the employees of the charity. They can all see the coin on the blockchain and verify that it has not been spent. Even though they possess the solution, they cannot spend it until Alice and/or Bob has died. This could potentially eliminate the need for complicated wills and/or expensive lawyers to determine inheritance.*
 
 	* I have no idea how inheritance law actually works.
 
@@ -68,50 +68,60 @@ Here’s how to create a Legacy Coin using the more complex scenario laid out ab
 		cdv clsp build ./leavealegacy/legacy.clsp
 		cdv clsp build ./leavealegacy/passwordprotect.clsp
 
-2. The first puzzle we need to build is the password-protected puzzle, which is the innermost puzzle. I’ll call it [PasswordPuzzle].
-	a. Choose a password and get its hash. Sha256 is built into chialisp, so this is easy to do from the command line. If we want the password to be _hello_, we can run this command:
-			run '(sha256 hello)'
-		The resulting hash is 0x2cf24dba5fb0a30e26e83b2ac5b9e29e1b161e5c1fa7425e73043362938b9824
-	b. Curry the hash into [PasswordPuzzle], and use the treehash flag:
-			cdv clsp curry ./leavealegacy/passwordprotect.clsp.hex -a 0x2cf24dba5fb0a30e26e83b2ac5b9e29e1b161e5c1fa7425e73043362938b9824 –treehash
-		The result using the ‘hello’ hash is 0933224426cc47801ecfc4d1914c22ea5116c38eefef9989396e85af75b1259f
-		Save this hash as it will be needed in the next puzzle.
+2. Start by building the innermost puzzle, which in this case is the password-protected puzzle. I’ll call it [PasswordPuzzle].
 
-3. Now build the inner legacy puzzle, which I’ll call [BobPuzzle]. This puzzle uses [PasswordPuzzle] as its inner puzzle. Do this by currying in 3 values, and using the --treehash flag to obtain a hash:
+	a. Choose a password and get its hash. Sha256 is built into chialisp, so this is easy to do from the command line. If we want the password to be _hello_, we can run this command:
+	
+			run '(sha256 hello)'
+			
+	The resulting hash is 0x2cf24dba5fb0a30e26e83b2ac5b9e29e1b161e5c1fa7425e73043362938b9824
+		
+	b. Curry the hash into [PasswordPuzzle], and use the treehash flag:
+	
+			cdv clsp curry ./leavealegacy/passwordprotect.clsp.hex -a 0x2cf24dba5fb0a30e26e83b2ac5b9e29e1b161e5c1fa7425e73043362938b9824 –treehash
+			
+	The result using the ‘hello’ hash is 0933224426cc47801ecfc4d1914c22ea5116c38eefef9989396e85af75b1259f
+		
+	Save this hash as it will be needed in the next puzzle.
+
+3. Now build the inner legacy puzzle, which I’ll call [BobPuzzle]. This puzzle uses [PasswordPuzzle] as its inner puzzle. Curry in 3 values:
+
 	a. Bob’s public key.
 
 	b. The amount of time before Bob’s simulated death, in seconds
 	
 	c. The inner puzzle hash, obtained in step 2 above.
+	
+	Also, use the --treehash flag to obtain a hash:
 
 		cdv clsp curry ./leavealegacy/legacy.clsp.hex -a BobPubKey -a 7200 -a 0x0933224426cc47801ecfc4d1914c22ea5116c38eefef9989396e85af75b1259f --treehash
 
-NOTE: You have to prepend all command line arguments that should be interpreted as bytes with ‘0x’.
+	NOTE: You have to prepend all command line arguments that should be interpreted as bytes with ‘0x’.
 
-The result of this command using the above parameters is:
-9c6e047a0771accebb46d5448d172b4e9f77f805f3b33d7fff5db4208c46286a
+	The result of this command using the above parameters is:
+	9c6e047a0771accebb46d5448d172b4e9f77f805f3b33d7fff5db4208c46286a
 
-This gives us the treehash of [BobPuzzle] with [PasswordPuzzle] as the inner puzzle.
+	This gives us the treehash of [BobPuzzle] with [PasswordPuzzle] as its inner puzzle.
 
-4. Build the outer legacy puzzle, which I’ll call [AlicePuzzle]. This puzzle uses [BobPuzzle] as its inner puzzle. Do this by currying in 3 values, and using the --treehash flag to obtain a hash:
+4. Build the outer legacy puzzle, which I’ll call [AlicePuzzle]. This puzzle uses [BobPuzzle] as its inner puzzle. Curry in 3 values:
 	
 	a. Alice’s public key.
 	
 	b. The amount of time before Alice’s simulated death, in seconds
 	
 	c. The inner puzzle hash, obtained in step 3 above.
+	
+	Also, use the --treehash flag to obtain a hash:
 
 		cdv clsp curry ./leavealegacy/legacy.clsp.hex -a AlicePubKey -a 3600 -a 0x9c6e047a0771accebb46d5448d172b4e9f77f805f3b33d7fff5db4208c46286a --treehash
 
-This gives the treehash of [AlicePuzzle]. Using the above values gives us:
-cd1a9493211f66da3afda7c1a313877d14c29655d9713d96c872e396f82fc4d9
+	This gives the treehash of [AlicePuzzle]. Using the above values gives us: cd1a9493211f66da3afda7c1a313877d14c29655d9713d96c872e396f82fc4d9
 
 5. Obtain the wallet address for the treehash. If running on testnet, use the txch prefix:
 
 		cdv encode [treehash] --prefix txch
 
 6. Send a coin of any value to the wallet address. Presumably this will be sent from Alice’s wallet, but technically it could come from anywhere.
-
 
 After confirmation on the blockchain, the coin is now set up. Using the values from this example, only Alice can spend the coin for the first hour. During the second hour (after Alice’s simulated death and before Bob’s), only Alice and Bob can spend the coin. After two hours anyone with the password can spend it.
 
@@ -126,11 +136,13 @@ The solution to [AlicePuzzle] requires three things:
 	
 3. The public key of whoever is attempting to spend the coin.
 
-– An aggregated signature with a private key that corresponds to the spender’s public key is also required.
+- If the curryed OWNER_PUBKEY matches the passed-in public key, an aggregated signature with a matching private key is also required. Otherwise, no aggregated signature is immediately required, but one might be required in an inner puzzle.
 
 The requirements for the inner puzzle and inner solution are dependent on who is attempting to spend the coin. For example:
-	– Alice is allowed to use any values. Presumably she’ll create one or more conditions to spend the coins. This is similar to the delegated spend in Chia’s standard transaction construction.
-	– Everyone else must enter exactly the inner puzzle that was used to generate the treehash for [BobPuzzle] above. They then execute [BobPuzzle] and the process repeats. See below for some examples.
+
+– Alice is allowed to use any values. Presumably she’ll create one or more conditions to spend the coins. This is similar to the delegated spend in Chia’s standard transaction construction.
+	
+– Everyone else must enter exactly the inner puzzle that was used to generate the treehash for [BobPuzzle] above. They then execute [BobPuzzle] and the process repeats. See below for some examples.
 
 ------------------------------------------
 **VI. Example Puzzle And Solutions**
