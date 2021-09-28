@@ -78,7 +78,7 @@ Here’s how to create a Legacy Coin using the more complex scenario laid out ab
 		
 	b. Curry the hash into [PasswordPuzzle], and use the treehash flag:
 	
-			cdv clsp curry ./leavealegacy/passwordprotect.clsp.hex -a 0x2cf24dba5fb0a30e26e83b2ac5b9e29e1b161e5c1fa7425e73043362938b9824 –treehash
+			cdv clsp curry ./leavealegacy/passwordprotect.clsp.hex -a 0x2cf24dba5fb0a30e26e83b2ac5b9e29e1b161e5c1fa7425e73043362938b9824 --treehash
 			
 	The result using the ‘hello’ hash is 0933224426cc47801ecfc4d1914c22ea5116c38eefef9989396e85af75b1259f
 		
@@ -99,7 +99,7 @@ Here’s how to create a Legacy Coin using the more complex scenario laid out ab
 	NOTE: You have to prepend all command line arguments that should be interpreted as bytes with ‘0x’.
 
 	The result of this command using the above parameters is:
-	9c6e047a0771accebb46d5448d172b4e9f77f805f3b33d7fff5db4208c46286a
+	dd9e391596a5fd732897d32d189db7768ef05a332e325eec1a0a0f4205aed845
 
 	This gives us the treehash of [BobPuzzle] with [PasswordPuzzle] as its inner puzzle.
 
@@ -113,9 +113,9 @@ Here’s how to create a Legacy Coin using the more complex scenario laid out ab
 	
 	Also, use the --treehash flag to obtain a hash:
 
-		cdv clsp curry ./leavealegacy/legacy.clsp.hex -a AlicePubKey -a 3600 -a 0x9c6e047a0771accebb46d5448d172b4e9f77f805f3b33d7fff5db4208c46286a --treehash
+		cdv clsp curry ./leavealegacy/legacy.clsp.hex -a AlicePubKey -a 3600 -a 0xdd9e391596a5fd732897d32d189db7768ef05a332e325eec1a0a0f4205aed845 --treehash
 
-	This gives the treehash of [AlicePuzzle]. Using the above values gives us: cd1a9493211f66da3afda7c1a313877d14c29655d9713d96c872e396f82fc4d9
+	This gives the treehash of [AlicePuzzle]. Using the above values gives us: 50981592c840f68d27821a2dc75cc8b268da992753f00ab155798f94d7252acf
 
 5. Obtain the wallet address for the treehash. If running on testnet, use the txch prefix:
 
@@ -149,7 +149,7 @@ The requirements for the inner puzzle and inner solution are dependent on who is
 
 Here is the puzzle generated from the above example, which will go on the blockchain:
 
-	'(a (q 2 (q 2 (i (= 5 -65) (q 4 (c 4 (c -65 (c (a 14 (c 2 (c 47 ()))) ()))) (a 47 95)) (q 4 (c 10 (c 11 ())) (a (i (= 23 ()) (q 4 (c 4 (c -65 (c (a 14 (c 2 (c 47 ()))) ()))) (a 47 95)) (q 2 (i (= 23 (a 14 (c 2 (c 47 ())))) (q 4 (c 4 (c -65 (c (a 14 (c 2 (c 47 ()))) ()))) (a 47 95)) (q 8 (q . "Inner puzzle does not match inner puzzle hash."))) 1)) 1))) 1) (c (q 50 80 2 (i (l 5) (q 11 (q . 2) (a 14 (c 2 (c 9 ()))) (a 14 (c 2 (c 13 ())))) (q 11 (q . 1) 5)) 1) 1)) (c (q . "AlicePubKey") (c (q . 3600) (c (q . 0x9c6e047a0771accebb46d5448d172b4e9f77f805f3b33d7fff5db4208c46286a) 1))))'
+	'(a (q 2 (q 2 (i (= 5 -65) (q 4 (c 4 (c -65 (c (a 14 (c 2 (c 47 ()))) ()))) (a 47 95)) (q 4 (c 10 (c 11 ())) (a (i 23 (q 2 (i (= 23 (a 14 (c 2 (c 47 ())))) (q 2 47 95) (q 8 (q . "Inner puzzle does not match inner puzzle hash."))) 1) (q 2 47 95)) 1))) 1) (c (q 50 80 2 (i (l 5) (q 11 (q . 2) (a 14 (c 2 (c 9 ()))) (a 14 (c 2 (c 13 ())))) (q 11 (q . 1) 5)) 1) 1)) (c (q . "AlicePubKey") (c (q . 3600) (c (q . 0xdd9e391596a5fd732897d32d189db7768ef05a332e325eec1a0a0f4205aed845) 1))))'
 
 And now for some solutions. Let’s say the coin is worth 1000 mojos and Alice wants to send half to herself and half to her car dealer. She could use this solution:
 
