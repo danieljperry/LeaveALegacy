@@ -92,7 +92,7 @@ Here’s how to create a Legacy Coin using the more complex scenario laid out ab
 
 	a. Bob’s public key.
 
-	b. The amount of time before Bob’s simulated death, in seconds
+	b. The amount of time before Bob’s simulated death, in seconds.
 	
 	c. The inner puzzle hash, obtained in step 2 above.
 	
@@ -111,7 +111,7 @@ Here’s how to create a Legacy Coin using the more complex scenario laid out ab
 	
 	a. Alice’s public key.
 	
-	b. The amount of time before Alice’s simulated death, in seconds
+	b. The amount of time before Alice’s simulated death, in seconds.
 	
 	c. The inner puzzle hash, obtained in step 3 above.
 	
@@ -184,18 +184,23 @@ If someone from the charity has the correct password and wishes to spend the coi
 
 ((80 3600) (80 7200) (50 "CharityPubKey" 0x43138432a85321ce4eb110af0ec388a4fabc1deb8e82242430579bd3e41abda2) (51 0xdeadbeef 1000) (60 1000))
 
-With each inner puzzle, we add on a new condition:
+With each inner Legacy Puzzle, we add on a new condition:
 
-- 80 – Ensure that at least a certain number of seconds have elapsed since the coin’s creation, simulating owner’s untimely death. If this condition is not met, the spend fails with ASSERT_SECONDS_RELATIVE_FAILED.
+- 80 – Ensure that at least a certain number of seconds have elapsed since the coin’s creation, simulating the owner’s untimely death. If this condition is not met, the spend fails with ASSERT_SECONDS_RELATIVE_FAILED.
+
+If the "owner" of that puzzle attempts to spend it, another condition is also added:
+
+- 50 – Sign the transaction with the private key that matches the public key given in the solution.
 
 Most users will also want to add their own conditions, such as:
-- 50 – Sign the transaction with the private key that matches the public key given in the solution.
 
 - 51 – create a new coin
 	
 - 60 – create an announcement for the coin spend
 
 If Alice or Bob attempt to spend the coin without an aggregated signature, the spend will fail with BAD_AGGREGATE_SIGNATURE. This protects against malicious users attempting to spend the coin to themselves by impersonating its rightful owner.
+
+If anyone else attempts to spend the coin, they'll reach the innermost puzzle, which in this example also requires an aggregated signature. However, this won't necessarily be the case. But even in case an aggregated signature is not required, those attempting to spend the coin will still be blocked by the timelock.
 
 ------------------------------------------
 **VII. Potential Future Improvements**
