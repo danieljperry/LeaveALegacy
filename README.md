@@ -41,6 +41,10 @@ In the simplest case, let's say Alice doesn’t have any heirs and she wants to 
 
 2. After Alice dies (simulated by N seconds having elapsed since the coin’s creation), anyone may spend the coin.
 
+Here's a visual example of what this coin will look like:
+
+![alt text](https://github.com/danieljperry/LeaveALegacy/blob/main/img/01_outer.jpg?raw=true)
+
 ------------------------------------------
 **III. More Complex Example**
 
@@ -59,6 +63,10 @@ For example, let’s say Alice wants to bequeath her money to Bob upon her death
 One advantage of this coin is that as soon as it is created, Alice can provide its ID, along with the correct puzzle and solution to unlock it, to both Bob and the employees of the charity. They can all see the coin on the blockchain and verify that it has not been spent. Even though they possess the solution, they cannot spend it until Alice and/or Bob has died. This could potentially eliminate the need for complicated wills and/or expensive lawyers to determine inheritance.*
 
 	* I have no idea how inheritance law actually works.
+
+And here's a visual representation of this coin:
+
+![alt text](https://github.com/danieljperry/LeaveALegacy/blob/main/img/03_password.jpg?raw=true)
 
 ------------------------------------------
 **IV. Command Line Instructions**
