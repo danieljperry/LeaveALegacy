@@ -219,10 +219,6 @@ If anyone else attempts to spend the coin, they'll reach the innermost puzzle, w
 
 – A web or command line interface for creating and spending the coin.
 	
-– Include some example spendbundles.
-	
 – Include a testing framework.
 	
 – Multisig capabilities, for example Bob and Brian (Alice’s two children) must both sign off before the coin can be spent.
-	
-– An online tutorial explaining in-depth how to set this up.
