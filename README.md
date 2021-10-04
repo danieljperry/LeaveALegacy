@@ -1,7 +1,8 @@
 ﻿# LeaveALegacy
 https://github.com/danieljperry/LeaveALegacy/
 
-* Video tutorials now available! *
+**Video tutorials now available!**
+
 https://www.youtube.com/channel/UCApODKqBfRkmbQsCBDq5Nlg
 
 
