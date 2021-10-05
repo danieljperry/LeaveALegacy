@@ -3,7 +3,7 @@ https://github.com/danieljperry/LeaveALegacy/
 
 **Video tutorials now available!**
 
-https://www.youtube.com/channel/UCApODKqBfRkmbQsCBDq5Nlg
+https://www.youtube.com/playlist?list=PL3k_XsjZ_oMytBzyWX1G51lGgCEOLbVRi
 
 
 LeaveALegacy (and the resultant Legacy Coin) is a first pass at using Chialisp to answer the question "What happens to our crypto when we die?"
